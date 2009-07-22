@@ -1,0 +1,14 @@
+% perl mojo.pl daemon
+Server available at http://127.0.0.1:3000.
+
+% perl xmlrpc foo
+Unknown method
+
+% perl xmlrpc plus 1
+Wrong prototype
+
+% perl xmlrpc plus 1 2
+3
+
+% perl xmlrpc plus 1 'hack me'
+Wrong prototype

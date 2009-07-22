@@ -20,6 +20,8 @@ use base 'Mojolicious';
 sub startup {
     my $self = shift;
 
+    $self->log->level('fatal');
+
     $self->routes->route('/')->to(controller => 'method', action => 'process');
 }
 
