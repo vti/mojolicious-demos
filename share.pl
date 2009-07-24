@@ -35,10 +35,8 @@ get '/(*cwd)' => 'root' => sub {
     $c->stash(cwd => $cwd, files => \@files);
 };
 
-warn "public=$dir";
 app->static->root($dir);
 
-#Rocker->rock('daemon');
 @ARGV = 'daemon';
 shagadelic;
 
