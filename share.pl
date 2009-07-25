@@ -13,7 +13,6 @@ use Mojolicious::Lite;
 
 get '/(*cwd)' => 'root' => sub {
     my $c = shift;
-    #my $c = $self->ctx;
 
     my $cwd = $c->stash('cwd') || '';
     $cwd = '/' . $cwd if $cwd;
@@ -22,7 +21,7 @@ get '/(*cwd)' => 'root' => sub {
     my $abs = $cwd ne '/' ? $c->app->static->root . $cwd : $c->app->static->root;
 
     opendir DIR, $abs or return $c->app->static->serve_404($c);
-    @files = grep { -r "$abs/$_" && !m/^\./ } readdir(DIR);
+    my @files = grep { -r "$abs/$_" && !m/^\./ } readdir(DIR);
     @files = map {
         {   name   => -d "$abs/$_" ? "$_/"     : $_,
             path   => $cwd         ? "$cwd/$_" : "/$_",
@@ -37,11 +36,11 @@ get '/(*cwd)' => 'root' => sub {
 
 app->static->root($dir);
 
-@ARGV = 'daemon';
-shagadelic;
+shagadelic('daemon');
 
 __DATA__
-__root.html.eplite__
+
+@@ root.html.eplite
 % my $self = shift;
 % my $files = $self->stash('files');
 % my $cwd = $self->stash('cwd') || '';
