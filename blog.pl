@@ -6,10 +6,10 @@ use Pod::Simple::HTML;
 require Time::Local;
 
 my %config = (
-    name        => 'vti',
-    email       => 'viacheslav.t@gmail.com',
-    title       => 'vti\'s notes',
-    description => 'different thoughts'
+    name        => $ENV{BLOG_USER}  || 'whoami',
+    email       => $ENV{BLOG_EMAIL} || '',
+    title       => $ENV{BLOG_TITLE} || 'I am so lazy to set the title',
+    description => $ENV{BLOG_DESCR} || 'I do not know if i need this'
 );
 
 get '/:index' => {index => 'index'} => 'index' => sub {
@@ -29,7 +29,7 @@ get '/:index' => {index => 'index'} => 'index' => sub {
         push @articles, $data;
     }
 
-    @articles = sort { $b->{mtime}->epoch <=> $a->{mtime}->epoch } @articles;
+    @articles = sort { $b->{name} cmp $a->{name} } @articles;
 
     my $last_modified = $articles[0]->{mtime};
 
@@ -81,7 +81,6 @@ sub _is_modified {
 }
 
 my %_articles;
-
 sub _parse_article {
     my $path = shift;
 
@@ -177,7 +176,7 @@ __DATA__
 <!html>
     <head><title><%= $config->{title} %></title></head>
     <body>
-        <div><a href="/">Articles</a></div>
+        <div><a href="/">Articles</a> (<a href="<%= $self->url_for('index', format => 'rss') %>">rss</a>)</div>
 
         <%= $self->render_inner %>
 
