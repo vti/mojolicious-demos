@@ -40,11 +40,6 @@ get '/:index' => {index => 'index'} => 'index' => sub {
 
     return 1 unless _is_modified($c, $last_modified);
 
-    my $format = $c->stash('format');
-    if ($format && $format eq 'rss') {
-        $c->res->headers->content_type('application/rss+xml');
-    }
-
     $c->stash(articles => \@articles, config => \%config);
 
     $c->res->headers->header('Last-Modified' => $last_modified);
@@ -73,21 +68,14 @@ sub _is_modified {
     my $c = shift;
     my ($last_modified) = @_;
 
-    if (my $date = $c->req->headers->header('If-Modified-Since')) {
+    my $date = $c->req->headers->header('If-Modified-Since');
+    return 1 unless $date;
 
-        # Not modified
-        if (Mojo::Date->new($date)->epoch == $last_modified->epoch) {
+    return 1 unless Mojo::Date->new($date)->epoch == $last_modified->epoch;
 
-            $c->res->code(304);
-            $c->res->headers->remove('Content-Type');
-            $c->res->headers->remove('Content-Length');
-            $c->res->headers->remove('Content-Disposition');
+    $c->res->code(304);
 
-            return 0;
-        }
-    }
-
-    return 1;
+    return 0;
 }
 
 my %_articles;
@@ -115,6 +103,8 @@ sub _parse_article {
 
     return $_articles{$path} = {title => $title, content => $content};
 }
+
+app->types->type(rss => 'application/rss+xml');
 
 shagadelic;
 __DATA__
