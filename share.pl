@@ -1,17 +1,13 @@
 #!/usr/bin/perl
 # A demo application for sharing files :)
 
-use FindBin;
-
-use lib "$FindBin::Bin/../lib";
+use Mojolicious::Lite;
 
 my $dir = shift;
 
 die 'usage: <dir>' unless $dir && -d $dir;
 
-use Mojolicious::Lite;
-
-get '/(*cwd)' => 'root' => sub {
+get '/(*cwd)' => sub {
     my $c = shift;
 
     my $cwd = $c->stash('cwd') || '';
@@ -32,7 +28,7 @@ get '/(*cwd)' => 'root' => sub {
     closedir DIR;
 
     $c->stash(cwd => $cwd, files => \@files);
-};
+} => 'root';
 
 app->static->root($dir);
 
@@ -40,7 +36,7 @@ shagadelic('daemon');
 
 __DATA__
 
-@@ root.html.eplite
+@@ root.html.epl
 % my $self = shift;
 % my $files = $self->stash('files');
 % my $cwd = $self->stash('cwd') || '';
