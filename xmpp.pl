@@ -38,7 +38,7 @@ push @$buffer, <<"EOF";
     <presence to='$to'>
        <priority>8</priority>
     </presence>
-    <message to='$to'> type='chat'>
+    <message to='$to' type='chat'>
         <subject></subject>
         <body>$message</body>
     </message>
